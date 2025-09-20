@@ -1,8 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Users, Building, Heart, Stethoscope, Pill, BookOpen } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const DepartmentsSection = () => {
+  const { t } = useLanguage();
+
   const partners = [
     {
       icon: Heart,
@@ -49,11 +52,12 @@ const DepartmentsSection = () => {
   ];
 
   const districts = [
-    { name: "Raipur Division", status: "Active", color: "bg-green-500" },
-    { name: "Bilaspur Division", status: "Active", color: "bg-green-500" },
-    { name: "Bastar Division", status: "Planning", color: "bg-yellow-500" },
-    { name: "Surguja Division", status: "Active", color: "bg-green-500" },
-    { name: "Durg Division", status: "Active", color: "bg-green-500" }
+    { name: t("konkan_division"), status: t("active"), color: "bg-green-500" },
+    { name: t("pune_division"), status: t("active"), color: "bg-green-500" },
+    { name: t("nashik_division"), status: t("active"), color: "bg-green-500" },
+    { name: t("aurangabad_division"), status: t("active"), color: "bg-green-500" },
+    { name: t("amravati_division"), status: t("active"), color: "bg-green-500" },
+    { name: t("nagpur_division"), status: t("active"), color: "bg-green-500" }
   ];
 
   return (
@@ -64,10 +68,10 @@ const DepartmentsSection = () => {
           <div>
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl lg:text-3xl font-bold text-foreground">
-                Departments & Partners
+                {t("departments_partners_title")}
               </h2>
               <Button variant="outline" size="sm">
-                View All <ExternalLink className="ml-2 w-4 h-4" />
+                {t("view_all")} <ExternalLink className="ml-2 w-4 h-4" />
               </Button>
             </div>
 
@@ -102,10 +106,10 @@ const DepartmentsSection = () => {
           <div>
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl lg:text-3xl font-bold text-foreground">
-                Regional Reach
+                {t("regional_reach_title")}
               </h2>
               <Button variant="outline" size="sm">
-                Interactive Map <ExternalLink className="ml-2 w-4 h-4" />
+                {t("interactive_map")} <ExternalLink className="ml-2 w-4 h-4" />
               </Button>
             </div>
 
@@ -113,7 +117,7 @@ const DepartmentsSection = () => {
             <Card className="border-0 shadow-card mb-6">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4">
-                  Districts of Chhattisgarh
+                  {t("districts_of_maharashtra")}
                 </h3>
                 <div className="space-y-3">
                   {districts.map((district, index) => (
@@ -123,7 +127,7 @@ const DepartmentsSection = () => {
                         <span className="font-medium text-foreground">{district.name}</span>
                       </div>
                       <span className={`text-sm px-2 py-1 rounded-full ${
-                        district.status === 'Active' 
+                        district.status === t("active") 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-yellow-100 text-yellow-800'
                       }`}>
@@ -140,13 +144,13 @@ const DepartmentsSection = () => {
               <Card className="border-0 shadow-card">
                 <CardContent className="p-4 text-center">
                   <div className="text-2xl font-bold text-primary">28</div>
-                  <div className="text-sm text-muted-foreground">Districts Covered</div>
+                  <div className="text-sm text-muted-foreground">{t("districts_covered")}</div>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-card">
                 <CardContent className="p-4 text-center">
                   <div className="text-2xl font-bold text-secondary">5</div>
-                  <div className="text-sm text-muted-foreground">Active Divisions</div>
+                  <div className="text-sm text-muted-foreground">{t("active_divisions")}</div>
                 </CardContent>
               </Card>
             </div>
@@ -159,12 +163,12 @@ const DepartmentsSection = () => {
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Building className="w-8 h-8 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-foreground mb-2">Interactive Map</h3>
+                    <h3 className="font-semibold text-foreground mb-2">{t("interactive_map")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Click to view detailed district-wise coverage
+                      {t("click_to_view_detailed_coverage")}
                     </p>
                     <Button variant="outline" size="sm" className="mt-3">
-                      Launch Map
+                      {t("launch_map")}
                     </Button>
                   </div>
                 </div>

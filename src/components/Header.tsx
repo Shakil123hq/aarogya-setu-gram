@@ -6,6 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from "@/components/ui/select";
 import {
   DropdownMenu,
@@ -13,8 +14,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/hooks/useLanguage";
+import { Link } from "react-router-dom"; // Import Link
 
 const Header = () => {
+  const { language, setLanguage } = useLanguage();
+
   return (
     <>
       {/* Top utility bar */}
@@ -25,15 +30,17 @@ const Header = () => {
             <span>Screen reader access</span>
           </div>
           <div className="flex items-center gap-4">
-            <Select defaultValue="en">
+            <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'hi' | 'mr')}>
               <SelectTrigger className="w-32 bg-transparent border-white/20 text-white">
                 <Globe className="w-4 h-4 mr-2" />
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="hi">हिंदी</SelectItem>
-                <SelectItem value="cg">छत्तीसगढ़ी</SelectItem>
+                <SelectGroup>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="hi">हिंदी</SelectItem>
+                  <SelectItem value="mr">मराठी</SelectItem>
+                </SelectGroup>
               </SelectContent>
             </Select>
             
@@ -45,19 +52,25 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Login
-                </DropdownMenuItem>
-                <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                <Link to="/login">
+                  <DropdownMenuItem>
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Login
+                  </DropdownMenuItem>
+                </Link>
+                <Link to="/patient-dashboard">
+                  <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Help</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Button size="sm" className="bg-accent hover:bg-accent/90">
-              Register
-            </Button>
+            <Link to="/register">
+              <Button size="sm" className="bg-accent hover:bg-accent/90">
+                Register
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

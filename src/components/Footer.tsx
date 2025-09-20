@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ExternalLink, Mail, Phone, MapPin, Facebook, Twitter, Youtube } from "lucide-react";
+import { ExternalLink, Mail, Phone, MapPin, Facebook, Twitter, Youtube, Languages } from "lucide-react";
 import digitalIndiaLogo from "@/assets/digital-india-logo.jpg";
 import myGovLogo from "@/assets/mygov-logo.jpg";
+import { useLanguage } from "@/hooks/useLanguage";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Footer = () => {
+  const { t, setLanguage } = useLanguage();
+
   const quickLinks = [
     "FAQs",
     "Feedback", 
@@ -65,7 +69,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
-                <span>Raipur, Chhattisgarh</span>
+                <span>{t("footer_contact_address")}</span>
               </div>
             </div>
           </div>
@@ -210,7 +214,7 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
             <div className="text-center md:text-left">
               <p className="opacity-80">
-                © 2025 Aarogya Sahayak. All contents are owned by Government of Chhattisgarh.
+                {t("footer_copyright")}
               </p>
               <p className="text-xs opacity-60 mt-1">
                 This is an official web portal for rural healthcare services. For inquiries, contact the Information Manager.
@@ -219,6 +223,21 @@ const Footer = () => {
             <div className="flex items-center gap-4 text-xs opacity-60">
               <span>Last updated: September 20, 2025</span>
               <span>Visitors: 15,420</span>
+            </div>
+            {/* Language Switcher */}
+            <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10 p-2">
+                    <Languages className="w-4 h-4 mr-2" />
+                    {t("language_switcher_label")}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage('mr')}>मराठी</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
