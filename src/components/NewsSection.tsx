@@ -1,8 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, ArrowRight, Bell } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const NewsSection = () => {
+  const { t } = useLanguage();
   const notifications = [
     {
       date: "20",
@@ -47,10 +49,10 @@ const NewsSection = () => {
         {/* Section header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-            Latest Updates & News
+            {t("news_section_title")}
           </h2>
           <p className="text-lg text-muted-foreground">
-            Stay informed about healthcare initiatives, campaigns, and community programs
+            {t("news_section_description")}
           </p>
         </div>
 

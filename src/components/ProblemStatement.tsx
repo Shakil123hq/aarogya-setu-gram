@@ -1,28 +1,31 @@
 import { AlertTriangle, MapPin, Users, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const ProblemStatement = () => {
+  const { t } = useLanguage();
+  
   const challenges = [
     {
       icon: MapPin,
-      title: "Distance Barriers",
-      description: "Remote villages lack nearby healthcare facilities",
-      stat: "40%",
-      statLabel: "of rural areas"
+      title: t("distance_barriers_title"),
+      description: t("distance_barriers_description"),
+      stat: t("distance_barriers_stat"),
+      statLabel: t("distance_barriers_stat_label")
     },
     {
       icon: Users,
-      title: "Specialist Shortage",
-      description: "Limited access to specialized healthcare professionals",
-      stat: "1:10,000",
-      statLabel: "doctor-patient ratio"
+      title: t("specialist_shortage_title"),
+      description: t("specialist_shortage_description"),
+      stat: t("specialist_shortage_stat"),
+      statLabel: t("specialist_shortage_stat_label")
     },
     {
       icon: Clock,
-      title: "Delayed Diagnosis",
-      description: "Chronic diseases go undetected due to lack of regular monitoring",
-      stat: "60%",
-      statLabel: "late detection"
+      title: t("delayed_diagnosis_title"),
+      description: t("delayed_diagnosis_description"),
+      stat: t("delayed_diagnosis_stat"),
+      statLabel: t("delayed_diagnosis_stat_label")
     }
   ];
 
@@ -32,14 +35,13 @@ const ProblemStatement = () => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-destructive/10 text-destructive px-4 py-2 rounded-full mb-4">
             <AlertTriangle className="w-5 h-5" />
-            <span className="font-medium">Critical Healthcare Challenge</span>
+            <span className="font-medium">{t("problem_statement_alert")}</span>
           </div>
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-            The Challenge in Rural Healthcare
+            {t("problem_statement_title")}
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Millions in Tier-2, Tier-3 cities and rural India face significant barriers in managing 
-            chronic diseases and accessing quality healthcare guidance.
+            {t("problem_statement_description")}
           </p>
         </div>
 
@@ -65,12 +67,10 @@ const ProblemStatement = () => {
         <div className="bg-white rounded-xl p-8 shadow-card">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-foreground mb-4">
-              Our Solution: Technology-Enabled Community Healthcare
+              {t("solution_title")}
             </h3>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Aarogya Sahayak bridges these gaps by connecting rural communities with local health workers, 
-              providing multilingual health guidance, and enabling proactive health monitoring through 
-              accessible technology solutions.
+              {t("solution_description")}
             </p>
           </div>
         </div>

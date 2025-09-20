@@ -12,52 +12,55 @@ import ashaWorkersImg from "@/assets/asha-workers.jpg";
 import multilingualIcon from "@/assets/multilingual-icon.jpg";
 import mobileHealthApp from "@/assets/mobile-health-app.jpg";
 import healthyFood from "@/assets/healthy-indian-food.jpg";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const FeaturesGrid = () => {
+  const { t } = useLanguage();
+  
   const features = [
     {
       icon: Users,
-      title: "Health Worker Connect",
-      description: "Direct connection with ASHA workers and local health volunteers for personalized guidance and support.",
+      title: t("health_worker_connect_title"),
+      description: t("health_worker_connect_description"),
       color: "bg-primary",
       bgColor: "bg-primary/10",
       image: ashaWorkersImg
     },
     {
       icon: Globe,
-      title: "Multilingual Interface",
-      description: "Available in Hindi, regional languages, and English to ensure accessible healthcare for all communities.",
+      title: t("multilingual_interface_title"),
+      description: t("multilingual_interface_description"),
       color: "bg-secondary",
       bgColor: "bg-secondary/10",
       image: multilingualIcon
     },
     {
       icon: Activity,
-      title: "Daily Vitals Logging",
-      description: "Track blood sugar, blood pressure, weight, and other vital signs with interactive charts and trends.",
+      title: t("daily_vitals_logging_title"),
+      description: t("daily_vitals_logging_description"),
       color: "bg-gov-teal",
       bgColor: "bg-gov-teal/10",
       image: mobileHealthApp
     },
     {
       icon: Bell,
-      title: "Automated Reminders",
-      description: "Never miss medications or check-ups with smart reminders customized to your health routine.",
+      title: t("automated_reminders_title"),
+      description: t("automated_reminders_description"),
       color: "bg-accent",
       bgColor: "bg-accent/10"
     },
     {
       icon: BookOpen,
-      title: "Personalized Health Feed",
-      description: "Receive local-language diet tips, exercise routines, and lifestyle recommendations tailored to your needs.",
+      title: t("personalized_health_feed_title"),
+      description: t("personalized_health_feed_description"),
       color: "bg-gov-navy",
       bgColor: "bg-gov-navy/10",
       image: healthyFood
     },
     {
       icon: Activity,
-      title: "Health Analytics",
-      description: "Comprehensive health insights and progress tracking to help you make informed decisions about your care.",
+      title: t("health_analytics_title"),
+      description: t("health_analytics_description"),
       color: "bg-destructive",
       bgColor: "bg-destructive/10"
     }
@@ -68,10 +71,10 @@ const FeaturesGrid = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-            Key Features & Services
+            {t("features_title")}
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Comprehensive healthcare solutions designed specifically for rural and semi-urban communities
+            {t("features_description")}
           </p>
         </div>
 
@@ -108,7 +111,7 @@ const FeaturesGrid = () => {
                   variant="ghost" 
                   className="p-0 h-auto text-primary hover:text-primary/80 font-medium group"
                 >
-                  Learn More
+                  {t("learn_more_button")}
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </CardContent>
@@ -119,7 +122,7 @@ const FeaturesGrid = () => {
         {/* CTA Section */}
         <div className="text-center mt-12">
           <Button size="lg" className="bg-primary hover:bg-primary/90 px-8">
-            Explore All Features
+            {t("explore_all_features_button")}
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>

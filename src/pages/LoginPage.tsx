@@ -1,120 +1,190 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/hooks/useLanguage";
-import { Link } from "react-router-dom";
+import { useMockAuth } from "@/hooks/useMockAuth";
+import { Link, useNavigate } from "react-router-dom";
+import { loginSchema, type LoginFormData } from "@/lib/validations";
+import { Loader2, Mail, Eye, EyeOff } from "lucide-react";
 
 const LoginPage = () => {
   const { t } = useLanguage();
-  const [role, setRole] = useState('patient'); // 'patient' or 'healthWorker'
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [officialId, setOfficialId] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const { signIn, loading } = useMockAuth();
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null); // Clear previous errors
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      role: 'patient',
+      rememberMe: false,
+    },
+  });
 
-    if (role === 'patient') {
-      if (!mobileNumber || !password) {
-        setError(t("empty_fields_error"));
-        return;
+  const selectedRole = watch('role');
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await signIn(data.email, data.password);
+      
+      // Redirect based on role
+      if (data.role === 'patient') {
+        navigate('/patient-dashboard');
+      } else {
+        navigate('/health-worker-dashboard');
       }
-    } else {
-      if (!officialId || !password) {
-        setError(t("empty_fields_error"));
-        return;
-      }
+    } catch (error) {
+      // Error is handled in the auth context
+      console.error('Login error:', error);
     }
-
-    // Handle login logic here based on role and credentials
-    console.log(`Logging in as ${role}:`, { mobileNumber, officialId, password });
-    // Simulate API call and then redirect or show success
-    alert(t("login_successful"));
   };
 
+
   return (
-    <div className="flex items-center justify-center">
-      <Card className="w-[400px] mx-auto">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-gov-navy">{t("login_title")}</CardTitle>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5 p-4">
+      <Card className="w-full max-w-md shadow-elevated">
+        <CardHeader className="text-center space-y-2">
+          <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center mx-auto mb-2">
+            <div className="text-white font-bold text-xl">आस</div>
+          </div>
+          <CardTitle className="text-2xl font-bold text-gov-navy">{t("login_title")}</CardTitle>
+          <p className="text-muted-foreground text-sm">
+            Welcome back to Aarogya Sahayak
+          </p>
         </CardHeader>
-        <CardContent className="p-8">
-          <div className="flex justify-center mb-6">
-            <Button
-              variant={role === 'patient' ? 'default' : 'outline'}
-              onClick={() => setRole('patient')}
-              className="w-1/2 rounded-r-none"
-            >
-              {t("role_patient")}
-            </Button>
-            <Button
-              variant={role === 'healthWorker' ? 'default' : 'outline'}
-              onClick={() => setRole('healthWorker')}
-              className="w-1/2 rounded-l-none"
-            >
-              {t("role_health_worker")}
-            </Button>
+        
+        <CardContent className="space-y-6">
+          {/* Role Selection */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Select Your Role</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                variant={selectedRole === 'patient' ? 'default' : 'outline'}
+                onClick={() => setValue('role', 'patient')}
+                className="h-12"
+              >
+                {t("role_patient")}
+              </Button>
+              <Button
+                type="button"
+                variant={selectedRole === 'health_worker' ? 'default' : 'outline'}
+                onClick={() => setValue('role', 'health_worker')}
+                className="h-12"
+              >
+                {t("role_health_worker")}
+              </Button>
+            </div>
           </div>
 
-          {error && <p className="text-destructive text-center mb-4">{error}</p>}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Email Field */}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email address"
+                  className="pl-10"
+                  {...register('email')}
+                />
+              </div>
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email.message}</p>
+              )}
+            </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            {role === 'patient' ? (
-              <div className="space-y-2">
-                <Label htmlFor="mobileNumber">{t("mobile_number_label")}</Label>
-                <Input
-                  id="mobileNumber"
-                  type="text"
-                  placeholder={t("enter_mobile_number_placeholder")}
-                  value={mobileNumber}
-                  onChange={(e) => setMobileNumber(e.target.value)}
-                  required
-                />
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <Label htmlFor="officialId">{t("official_id_label")}</Label>
-                <Input
-                  id="officialId"
-                  type="text"
-                  placeholder={t("enter_official_id_placeholder")}
-                  value={officialId}
-                  onChange={(e) => setOfficialId(e.target.value)}
-                  required
-                />
-              </div>
-            )}
+            {/* Password Field */}
             <div className="space-y-2">
               <Label htmlFor="password">{t("password_label")}</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder={t("enter_password_placeholder")}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  className="pr-10"
+                  {...register('password')}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </Button>
+              </div>
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password.message}</p>
+              )}
             </div>
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-              {t("login_button")}
+
+            {/* Remember Me & Forgot Password */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="rememberMe"
+                  {...register('rememberMe')}
+                />
+                <Label htmlFor="rememberMe" className="text-sm">
+                  Remember me
+                </Label>
+              </div>
+              <Link 
+                to="/forgot-password" 
+                className="text-sm text-primary hover:underline"
+              >
+                {t("forgot_password_link")}
+              </Link>
+            </div>
+
+            {/* Submit Button */}
+            <Button 
+              type="submit" 
+              className="w-full h-12 bg-primary hover:bg-primary/90"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                t("login_button")
+              )}
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm">
-            <Link to="/forgot-password" className="text-primary hover:underline">
-              {t("forgot_password_link")}
-            </Link>
-            <p className="mt-2">
+
+          {/* Register Link */}
+          <div className="text-center text-sm">
+            <span className="text-muted-foreground">
               {t("no_account_question")}{' '}
-              <Link to="/register" className="text-primary hover:underline">
-                {t("register_link")}
-              </Link>
-            </p>
+            </span>
+            <Link 
+              to="/register" 
+              className="text-primary hover:underline font-medium"
+            >
+              {t("register_link")}
+            </Link>
           </div>
         </CardContent>
       </Card>

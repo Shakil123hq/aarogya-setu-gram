@@ -10,30 +10,30 @@ const Footer = () => {
   const { t, setLanguage } = useLanguage();
 
   const quickLinks = [
-    "FAQs",
-    "Feedback", 
-    "Privacy Policy",
-    "Terms of Service",
-    "Accessibility",
-    "Sitemap"
+    t("faqs"),
+    t("feedback"), 
+    t("privacy_policy"),
+    t("terms_of_service"),
+    t("accessibility"),
+    t("sitemap")
   ];
 
   const services = [
-    "Health Worker Connect",
-    "Vitals Tracking",
-    "Medicine Reminders",
-    "Health Analytics",
-    "Community Support",
-    "Emergency Contacts"
+    t("health_worker_connect"),
+    t("vitals_tracking"),
+    t("medicine_reminders"),
+    t("health_analytics"),
+    t("community_support"),
+    t("emergency_contacts")
   ];
 
   const departments = [
-    "Public Health Department",
-    "Rural Development",
-    "Medical Education",
-    "Digital India Initiative",
-    "ASHA Worker Program",
-    "Community Health Services"
+    t("public_health_department"),
+    t("rural_development"),
+    t("medical_education"),
+    t("digital_india_initiative"),
+    t("asha_worker_program"),
+    t("community_health_services")
   ];
 
   return (
@@ -48,13 +48,12 @@ const Footer = () => {
                 <div className="text-primary font-bold">आस</div>
               </div>
               <div>
-                <h3 className="text-xl font-bold">Aarogya Sahayak</h3>
-                <p className="text-sm opacity-80">Bridging the Rural Health Divide</p>
+                <h3 className="text-xl font-bold">{t("app_name")}</h3>
+                <p className="text-sm opacity-80">{t("app_tagline")}</p>
               </div>
             </div>
             <p className="text-sm opacity-80 mb-6 leading-relaxed">
-              Empowering rural communities with accessible healthcare guidance, 
-              connecting local health workers, and promoting wellness across India.
+              {t("footer_description")}
             </p>
             
             {/* Contact info */}
@@ -76,7 +75,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+            <h4 className="text-lg font-semibold mb-4">{t("quick_links")}</h4>
             <ul className="space-y-2">
               {quickLinks.map((link, index) => (
                 <li key={index}>
@@ -94,7 +93,7 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Our Services</h4>
+            <h4 className="text-lg font-semibold mb-4">{t("our_services")}</h4>
             <ul className="space-y-2">
               {services.map((service, index) => (
                 <li key={index}>
@@ -111,31 +110,31 @@ const Footer = () => {
 
           {/* Newsletter & Social */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Stay Connected</h4>
+            <h4 className="text-lg font-semibold mb-4">{t("stay_connected")}</h4>
             <p className="text-sm opacity-80 mb-4">
-              Subscribe to our newsletter for health updates and announcements.
+              {t("newsletter_description")}
             </p>
             
             {/* Newsletter signup */}
             <div className="flex gap-2 mb-6">
               <Input 
-                placeholder="Enter your email" 
+                placeholder={t("enter_email_placeholder")} 
                 className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
               />
               <Button size="sm" className="bg-accent hover:bg-accent/90">
-                Subscribe
+                {t("subscribe_button")}
               </Button>
             </div>
 
             {/* Social links */}
             <div className="flex gap-3">
-              <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10 p-2">
+              <Button size="sm" variant="outline" className="border-accent/30 text-accent hover:bg-accent/10 hover:border-accent/50 p-2 transition-all duration-200">
                 <Facebook className="w-4 h-4" />
               </Button>
-              <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10 p-2">
+              <Button size="sm" variant="outline" className="border-accent/30 text-accent hover:bg-accent/10 hover:border-accent/50 p-2 transition-all duration-200">
                 <Twitter className="w-4 h-4" />
               </Button>
-              <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10 p-2">
+              <Button size="sm" variant="outline" className="border-accent/30 text-accent hover:bg-accent/10 hover:border-accent/50 p-2 transition-all duration-200">
                 <Youtube className="w-4 h-4" />
               </Button>
             </div>
@@ -144,7 +143,7 @@ const Footer = () => {
 
         {/* Departments section */}
         <div className="border-t border-white/20 pt-8 mt-8">
-          <h4 className="text-lg font-semibold mb-4">Government Departments & Partners</h4>
+          <h4 className="text-lg font-semibold mb-4">{t("government_departments_partners")}</h4>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-2">
             {departments.map((dept, index) => (
               <a 
@@ -187,20 +186,20 @@ const Footer = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-accent rounded flex items-center justify-center">
+              <div className="w-10 h-10 bg-accent rounded flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-xs">AB</span>
               </div>
               <div className="text-sm text-center">
-                <div className="font-medium">Ayushman Bharat</div>
+                <div className="font-medium text-accent">Ayushman Bharat</div>
                 <div className="text-xs opacity-60">Health Mission</div>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-secondary rounded flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary rounded flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-xs">NH</span>
               </div>
               <div className="text-sm text-center">
-                <div className="font-medium">NRHM</div>
+                <div className="font-medium text-primary">NRHM</div>
                 <div className="text-xs opacity-60">Rural Health Mission</div>
               </div>
             </div>
@@ -228,14 +227,30 @@ const Footer = () => {
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10 p-2">
+                  <Button variant="outline" size="sm" className="border-accent/40 text-accent hover:bg-accent/10 hover:border-accent/60 px-3 py-2 transition-all duration-200">
                     <Languages className="w-4 h-4 mr-2" />
                     {t("language_switcher_label")}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLanguage('mr')}>मराठी</DropdownMenuItem>
+                <DropdownMenuContent className="bg-white border-accent/20">
+                  <DropdownMenuItem 
+                    onClick={() => setLanguage('en')}
+                    className="hover:bg-accent/10 hover:text-accent cursor-pointer"
+                  >
+                    English
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setLanguage('hi')}
+                    className="hover:bg-accent/10 hover:text-accent cursor-pointer"
+                  >
+                    हिन्दी
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setLanguage('mr')}
+                    className="hover:bg-accent/10 hover:text-accent cursor-pointer"
+                  >
+                    मराठी
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

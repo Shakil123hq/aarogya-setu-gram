@@ -1,227 +1,264 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useMockAuth } from "@/hooks/useMockAuth";
+import { Link, useNavigate } from "react-router-dom";
+import { registerSchema, type RegisterFormData } from "@/lib/validations";
+import { Loader2, Mail, Eye, EyeOff, User, Shield } from "lucide-react";
 
 const PatientRegisterPage = () => {
   const { t } = useLanguage();
-  const navigate = useNavigate(); // Initialize navigate
-  const [registrationType, setRegistrationType] = useState<'choose' | 'patient' | 'healthWorker'>('choose');
-  const [step, setStep] = useState(1);
-  const [fullName, setFullName] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [otp, setOtp] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [preferredLanguage, setPreferredLanguage] = useState('en');
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { signUp } = useMockAuth();
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNext = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null); // Clear previous errors
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+    trigger,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      role: 'patient',
+      preferredLanguage: 'en',
+      agreeToTerms: false,
+    },
+  });
 
-    if (step === 1) {
-      if (!fullName || !mobileNumber) {
-        setError(t("empty_fields_error"));
-        return;
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      setIsSubmitting(true);
+      const user = await signUp(data.email, data.password, data.fullName, 'patient');
+      
+      if (user) {
+        // User will be signed out until they verify email
+        navigate('/login', { 
+          state: { 
+            message: 'Registration successful! Please check your email to verify your account before signing in.' 
+          }
+        });
       }
-      if (!/^[0-9]{10}$/.test(mobileNumber)) {
-        setError(t("invalid_mobile_number_error"));
-        return;
-      }
-      // Simulate sending OTP
-      console.log('Sending OTP to', mobileNumber);
-      alert(t("otp_sent_success")); // User feedback
-      setStep(2);
-    } else if (step === 2) {
-      if (!otp || !password || !confirmPassword) {
-        setError(t("empty_fields_error"));
-        return;
-      }
-      if (password !== confirmPassword) {
-        setError(t("password_mismatch_error"));
-        return;
-      }
-      // Basic password strength check (can be expanded)
-      if (password.length < 6) {
-        setError(t("password_strength_error"));
-        return;
-      }
-      setStep(3);
+    } catch (error) {
+      console.error('Registration error:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    if (!agreedToTerms) {
-      setError(t("agree_to_terms_error"));
-      return;
-    }
-
-    // Final registration logic
-    console.log('Registering patient', { fullName, mobileNumber, password, preferredLanguage, agreedToTerms });
-    alert(t("patient_registration_success"));
-    // Redirect to login or dashboard
-  };
-
-  if (registrationType === 'choose') {
-    return (
-      <div className="flex items-center justify-center">
-        <Card className="w-[400px] mx-auto">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold text-gov-navy">{t("choose_registration_type")}</CardTitle>
-          </CardHeader>
-          <CardContent className="p-8 space-y-4">
-            <Button
-              className="w-full bg-primary hover:bg-primary/90"
-              onClick={() => setRegistrationType('patient')}
-            >
-              {t("register_as_patient_button")}
-            </Button>
-            <Button
-              className="w-full bg-secondary hover:bg-secondary/90"
-              onClick={() => navigate('/health-worker-register')}
-            >
-              {t("register_as_health_worker_button")}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
-    <div className="flex items-center justify-center">
-      <Card className="w-[400px] mx-auto">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-gov-navy">{t("patient_registration_title")}</CardTitle>
-          <p className="text-sm text-muted-foreground">{t("step_indicator").replace('{step}', String(step)).replace('{totalSteps}', '3')}</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5 p-4">
+      <Card className="w-full max-w-lg shadow-elevated">
+        <CardHeader className="text-center space-y-2">
+          <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center mx-auto mb-2">
+            <User className="w-8 h-8 text-white" />
+          </div>
+          <CardTitle className="text-2xl font-bold text-gov-navy">
+            {t("patient_registration_title")}
+          </CardTitle>
+          <p className="text-muted-foreground text-sm">
+            Join Aarogya Sahayak as a Patient
+          </p>
         </CardHeader>
-        <CardContent className="p-8">
-          {error && <p className="text-destructive text-center mb-4">{error}</p>}
-          <form onSubmit={step < 3 ? handleNext : handleRegister} className="space-y-4">
-            {step === 1 && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">{t("full_name_label")}</Label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder={t("enter_full_name_placeholder")}
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="mobileNumber">{t("mobile_number_label")}</Label>
-                  <Input
-                    id="mobileNumber"
-                    type="text"
-                    placeholder={t("enter_mobile_number_placeholder")}
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                  {t("next_step_button")}
-                </Button>
+        
+        <CardContent className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Full Name Field */}
+            <div className="space-y-2">
+              <Label htmlFor="fullName">{t("full_name_label")}</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder={t("enter_full_name_placeholder")}
+                  className="pl-10"
+                  {...register('fullName')}
+                />
               </div>
-            )}
+              {errors.fullName && (
+                <p className="text-sm text-destructive">{errors.fullName.message}</p>
+              )}
+            </div>
 
-            {step === 2 && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="otp">{t("otp_label")}</Label>
-                  <Input
-                    id="otp"
-                    type="text"
-                    placeholder={t("enter_otp_placeholder")}
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">{t("password_label")}</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder={t("create_password_placeholder")}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">{t("confirm_password_label")}</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder={t("confirm_password_placeholder")}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                  {t("next_step_button")}
-                </Button>
+            {/* Email Field */}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email address"
+                  className="pl-10"
+                  {...register('email')}
+                />
               </div>
-            )}
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email.message}</p>
+              )}
+            </div>
 
-            {step === 3 && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="preferredLanguage">{t("preferred_language_label")}</Label>
-                  <Select value={preferredLanguage} onValueChange={setPreferredLanguage}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("select_language_placeholder")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="hi">हिंदी</SelectItem>
-                      <SelectItem value="mr">मराठी</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="terms"
-                    checked={agreedToTerms}
-                    onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
-                  />
-                  <label
-                    htmlFor="terms"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {t("agree_to_terms")}{' '}
-                    <Link to="/terms-of-service" className="text-primary hover:underline">
-                      {t("terms_of_service_link")}
-                    </Link>
-                  </label>
-                </div>
-                <Button type="submit" className="w-full bg-accent hover:bg-accent/90" disabled={!agreedToTerms}>
-                  {t("register_button")}
+            {/* Password Field */}
+            <div className="space-y-2">
+              <Label htmlFor="password">{t("password_label")}</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Create a strong password"
+                  className="pr-10"
+                  {...register('password')}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  )}
                 </Button>
               </div>
-            )}
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password.message}</p>
+              )}
+            </div>
+
+            {/* Confirm Password Field */}
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">{t("confirm_password_label")}</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder={t("confirm_password_placeholder")}
+                  className="pr-10"
+                  {...register('confirmPassword')}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </Button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+
+            {/* Preferred Language */}
+            <div className="space-y-2">
+              <Label htmlFor="preferredLanguage">{t("preferred_language_label")}</Label>
+              <Select onValueChange={(value) => setValue('preferredLanguage', value as 'en' | 'hi' | 'mr')}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t("select_language_placeholder")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="hi">हिंदी</SelectItem>
+                  <SelectItem value="mr">मराठी</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.preferredLanguage && (
+                <p className="text-sm text-destructive">{errors.preferredLanguage.message}</p>
+              )}
+            </div>
+
+            {/* Terms and Conditions */}
+            <div className="space-y-2">
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="agreeToTerms"
+                  checked={watch('agreeToTerms')}
+                  onCheckedChange={(checked) => {
+                    setValue('agreeToTerms', !!checked);
+                    trigger('agreeToTerms');
+                  }}
+                />
+                <Label htmlFor="agreeToTerms" className="text-sm leading-relaxed">
+                  {t("agree_to_terms")}{' '}
+                  <Link to="/terms" className="text-primary hover:underline">
+                    {t("terms_of_service_link")}
+                  </Link>
+                  {' '}and Privacy Policy
+                </Label>
+              </div>
+              {errors.agreeToTerms && (
+                <p className="text-sm text-destructive">{errors.agreeToTerms.message}</p>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <Button 
+              type="submit" 
+              className="w-full h-12 bg-primary hover:bg-primary/90"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                t("register_button")
+              )}
+            </Button>
           </form>
 
-          {step > 1 && (
-            <Button variant="link" onClick={() => setStep(step - 1)} className="mt-4 w-full">
-              {t("previous_step_button")}
-            </Button>
-          )}
+
+          {/* Login Link */}
+          <div className="text-center text-sm">
+            <span className="text-muted-foreground">
+              Already have an account?{' '}
+            </span>
+            <Link 
+              to="/login" 
+              className="text-primary hover:underline font-medium"
+            >
+              Sign in
+            </Link>
+          </div>
+
+          {/* Health Worker Registration Link */}
+          <div className="text-center">
+            <div className="bg-muted/50 rounded-lg p-4">
+              <div className="flex items-center justify-center mb-2">
+                <Shield className="w-5 h-5 text-primary mr-2" />
+                <span className="font-medium text-sm">Are you a Health Worker?</span>
+              </div>
+              <Link 
+                to="/health-worker-register" 
+                className="text-primary hover:underline text-sm font-medium"
+              >
+                Register as Health Worker
+              </Link>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import enTranslations from '../localization/en.json';
+import hiTranslations from '../localization/hi.json';
 import mrTranslations from '../localization/mr.json';
 
-type Language = 'en' | 'mr';
+type Language = 'en' | 'hi' | 'mr';
 type Translations = {
   [key: string]: string;
 };
@@ -20,6 +21,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   const translations: Record<Language, Translations> = {
     en: enTranslations,
+    hi: hiTranslations,
     mr: mrTranslations,
   };
 
