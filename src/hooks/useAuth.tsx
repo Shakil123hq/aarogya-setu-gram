@@ -79,10 +79,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         title: "Sign in successful",
         description: "Welcome back!",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const firebaseError = error as { code?: string };
       let errorMessage = "An error occurred during sign in.";
       
-      switch (error.code) {
+      switch (firebaseError.code) {
         case 'auth/user-not-found':
           errorMessage = "No account found with this email.";
           break;
@@ -146,10 +147,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       signOut(auth).catch(console.warn);
       
       return result.user;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const firebaseError = error as { code?: string };
       let errorMessage = "An error occurred during sign up.";
       
-      switch (error.code) {
+      switch (firebaseError.code) {
         case 'auth/email-already-in-use':
           errorMessage = "An account with this email already exists.";
           break;
@@ -202,7 +204,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       
       return result.user;
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Google sign in failed",
         description: "An error occurred during Google sign in.",

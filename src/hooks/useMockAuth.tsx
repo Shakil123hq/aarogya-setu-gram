@@ -45,8 +45,8 @@ export const MockAuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await mockAuthAPI.login(email, password);
       
       if (response.success && response.user && response.token) {
@@ -65,16 +65,14 @@ export const MockAuthProvider = ({ children }: { children: ReactNode }) => {
         });
         throw new Error(response.message);
       }
-    } catch (error: any) {
-      throw error;
     } finally {
       setLoading(false);
     }
   };
 
   const signUp = async (email: string, password: string, displayName: string, role: UserRole) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await mockAuthAPI.register(email, password, displayName, role);
       
       if (response.success && response.user && response.token) {
@@ -93,16 +91,14 @@ export const MockAuthProvider = ({ children }: { children: ReactNode }) => {
         });
         throw new Error(response.message);
       }
-    } catch (error: any) {
-      throw error;
     } finally {
       setLoading(false);
     }
   };
 
   const signInWithGoogle = async (role: UserRole) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await mockAuthAPI.googleSignIn(role);
       
       if (response.success && response.user && response.token) {
@@ -123,15 +119,13 @@ export const MockAuthProvider = ({ children }: { children: ReactNode }) => {
         });
         throw new Error(response.message);
       }
-    } catch (error: any) {
-      throw error;
     } finally {
       setLoading(false);
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('mockAuth_token');
+    localStorage.removeItem('auth_token');
     setUser(null);
     toast({
       title: "Signed out successfully",
@@ -145,13 +139,13 @@ export const MockAuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(updatedUser);
       
       // Update the token with new user data
-      const token = localStorage.getItem('mockAuth_token');
+      const token = localStorage.getItem('auth_token');
       if (token) {
         try {
           const payload = JSON.parse(atob(token));
           payload.user = updatedUser;
           const newToken = btoa(JSON.stringify(payload));
-          localStorage.setItem('mockAuth_token', newToken);
+          localStorage.setItem('auth_token', newToken);
         } catch (error) {
           console.error('Error updating profile picture in token:', error);
         }

@@ -14,9 +14,9 @@ const medications = [
 
 const MedicationsPage = () => {
   const { t } = useLanguage();
-  const [medicationTaken, setMedicationTaken] = useState({});
+  const [medicationTaken, setMedicationTaken] = useState<Record<string, boolean>>({});
 
-  const markDoseTaken = (medicationId, doseTime) => {
+  const markDoseTaken = (medicationId: number, doseTime: string) => {
     const today = new Date().toDateString();
     const doseKey = `${medicationId}-${doseTime}-${today}`;
     setMedicationTaken(prev => ({
@@ -25,7 +25,7 @@ const MedicationsPage = () => {
     }));
   };
 
-  const undoDoseTaken = (medicationId, doseTime) => {
+  const undoDoseTaken = (medicationId: number, doseTime: string) => {
     const today = new Date().toDateString();
     const doseKey = `${medicationId}-${doseTime}-${today}`;
     setMedicationTaken(prev => {
@@ -35,7 +35,7 @@ const MedicationsPage = () => {
     });
   };
 
-  const isDoseTaken = (medicationId, doseTime) => {
+  const isDoseTaken = (medicationId: number, doseTime: string) => {
     const today = new Date().toDateString();
     const doseKey = `${medicationId}-${doseTime}-${today}`;
     return medicationTaken[doseKey];
