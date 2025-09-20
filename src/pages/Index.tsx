@@ -4,6 +4,7 @@ import ProblemStatement from "@/components/ProblemStatement";
 import FeaturesGrid from "@/components/FeaturesGrid";
 import NewsSection from "@/components/NewsSection";
 import DepartmentsSection from "@/components/DepartmentsSection";
+import DistrictReach from "@/components/DistrictReach";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -16,6 +17,7 @@ const Index = () => {
         <FeaturesGrid />
         <NewsSection />
         <DepartmentsSection />
+        <DistrictReach />
       </main>
       <Footer />
     </div>

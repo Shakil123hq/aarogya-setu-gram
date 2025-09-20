@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
-import heroImage from "@/assets/hero-healthcare.jpg";
+import heroImage from "@/assets/rural-healthcare-1.jpg";
 
 const HeroSection = () => {
   return (
@@ -17,9 +17,8 @@ const HeroSection = () => {
       <div className="relative container mx-auto px-4 py-20 lg:py-32">
         <div className="max-w-3xl">
           <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            Accessible healthcare guidance for{" "}
-            <span className="text-accent">every village</span> and{" "}
-            <span className="text-accent">every home</span>
+            Aarogya Sahayak –{" "}
+            <span className="text-accent">Bridging the Rural Health Divide</span>
           </h1>
           
           <p className="text-xl text-white/90 mb-8 leading-relaxed">

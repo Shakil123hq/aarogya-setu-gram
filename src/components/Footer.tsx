@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ExternalLink, Mail, Phone, MapPin, Facebook, Twitter, Youtube } from "lucide-react";
+import digitalIndiaLogo from "@/assets/digital-india-logo.jpg";
+import myGovLogo from "@/assets/mygov-logo.jpg";
 
 const Footer = () => {
   const quickLinks = [
@@ -158,21 +160,45 @@ const Footer = () => {
       <div className="border-t border-white/20 bg-white/5">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-wrap items-center justify-center gap-8 opacity-80">
-            <div className="text-sm text-center">
-              <div className="font-medium">Digital India</div>
-              <div className="text-xs opacity-60">Government Initiative</div>
+            <div className="flex items-center gap-2">
+              <img 
+                src={digitalIndiaLogo} 
+                alt="Digital India" 
+                className="w-10 h-10 object-contain rounded"
+              />
+              <div className="text-sm text-center">
+                <div className="font-medium">Digital India</div>
+                <div className="text-xs opacity-60">Government Initiative</div>
+              </div>
             </div>
-            <div className="text-sm text-center">
-              <div className="font-medium">MyGov</div>
-              <div className="text-xs opacity-60">Citizen Engagement</div>
+            <div className="flex items-center gap-2">
+              <img 
+                src={myGovLogo} 
+                alt="MyGov" 
+                className="w-10 h-10 object-contain rounded"
+              />
+              <div className="text-sm text-center">
+                <div className="font-medium">MyGov</div>
+                <div className="text-xs opacity-60">Citizen Engagement</div>
+              </div>
             </div>
-            <div className="text-sm text-center">
-              <div className="font-medium">Ayushman Bharat</div>
-              <div className="text-xs opacity-60">Health Mission</div>
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-accent rounded flex items-center justify-center">
+                <span className="text-white font-bold text-xs">AB</span>
+              </div>
+              <div className="text-sm text-center">
+                <div className="font-medium">Ayushman Bharat</div>
+                <div className="text-xs opacity-60">Health Mission</div>
+              </div>
             </div>
-            <div className="text-sm text-center">
-              <div className="font-medium">NRHM</div>
-              <div className="text-xs opacity-60">Rural Health Mission</div>
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-secondary rounded flex items-center justify-center">
+                <span className="text-white font-bold text-xs">NH</span>
+              </div>
+              <div className="text-sm text-center">
+                <div className="font-medium">NRHM</div>
+                <div className="text-xs opacity-60">Rural Health Mission</div>
+              </div>
             </div>
           </div>
         </div>

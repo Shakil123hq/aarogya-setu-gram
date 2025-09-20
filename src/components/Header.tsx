@@ -7,6 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   return (
@@ -30,10 +36,25 @@ const Header = () => {
                 <SelectItem value="cg">छत्तीसगढ़ी</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm" className="bg-transparent border-white/20 text-white hover:bg-white/10">
-              <LogIn className="w-4 h-4 mr-2" />
-              Login
-            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="bg-transparent border-white/20 text-white hover:bg-white/10">
+                  <User className="w-4 h-4 mr-2" />
+                  Profile
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Login
+                </DropdownMenuItem>
+                <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem>Help</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <Button size="sm" className="bg-accent hover:bg-accent/90">
               Register
             </Button>

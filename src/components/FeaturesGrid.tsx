@@ -8,6 +8,10 @@ import {
   BookOpen, 
   ArrowRight 
 } from "lucide-react";
+import ashaWorkersImg from "@/assets/asha-workers.jpg";
+import multilingualIcon from "@/assets/multilingual-icon.jpg";
+import mobileHealthApp from "@/assets/mobile-health-app.jpg";
+import healthyFood from "@/assets/healthy-indian-food.jpg";
 
 const FeaturesGrid = () => {
   const features = [
@@ -16,21 +20,24 @@ const FeaturesGrid = () => {
       title: "Health Worker Connect",
       description: "Direct connection with ASHA workers and local health volunteers for personalized guidance and support.",
       color: "bg-primary",
-      bgColor: "bg-primary/10"
+      bgColor: "bg-primary/10",
+      image: ashaWorkersImg
     },
     {
       icon: Globe,
       title: "Multilingual Interface",
       description: "Available in Hindi, regional languages, and English to ensure accessible healthcare for all communities.",
       color: "bg-secondary",
-      bgColor: "bg-secondary/10"
+      bgColor: "bg-secondary/10",
+      image: multilingualIcon
     },
     {
       icon: Activity,
       title: "Daily Vitals Logging",
       description: "Track blood sugar, blood pressure, weight, and other vital signs with interactive charts and trends.",
       color: "bg-gov-teal",
-      bgColor: "bg-gov-teal/10"
+      bgColor: "bg-gov-teal/10",
+      image: mobileHealthApp
     },
     {
       icon: Bell,
@@ -44,7 +51,8 @@ const FeaturesGrid = () => {
       title: "Personalized Health Feed",
       description: "Receive local-language diet tips, exercise routines, and lifestyle recommendations tailored to your needs.",
       color: "bg-gov-navy",
-      bgColor: "bg-gov-navy/10"
+      bgColor: "bg-gov-navy/10",
+      image: healthyFood
     },
     {
       icon: Activity,
@@ -74,9 +82,22 @@ const FeaturesGrid = () => {
               className="border-0 shadow-card hover:shadow-elevated transition-all duration-300 group cursor-pointer"
             >
               <CardContent className="p-6">
-                <div className={`w-16 h-16 ${feature.bgColor} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <feature.icon className={`w-8 h-8 ${feature.color.replace('bg-', 'text-')}`} />
-                </div>
+                {feature.image ? (
+                  <div className="relative mb-4 overflow-hidden rounded-xl">
+                    <img 
+                      src={feature.image} 
+                      alt={feature.title}
+                      className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className={`absolute inset-0 ${feature.bgColor} bg-opacity-90 flex items-center justify-center`}>
+                      <feature.icon className={`w-8 h-8 ${feature.color.replace('bg-', 'text-')}`} />
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`w-16 h-16 ${feature.bgColor} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className={`w-8 h-8 ${feature.color.replace('bg-', 'text-')}`} />
+                  </div>
+                )}
                 <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">
                   {feature.title}
                 </h3>
