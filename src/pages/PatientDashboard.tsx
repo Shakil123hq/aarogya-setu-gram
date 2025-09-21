@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useMockAuth } from "@/hooks/useMockAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useHealthData } from "@/hooks/useHealthData";
+import { getBloodPressureStatus, getHeartRateStatus, getBloodSugarStatus, getWeightStatus } from "@/lib/healthUtils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,8 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Heart, Activity, Thermometer, Weight, Calendar, Bell, TrendingUp, AlertCircle, CheckCircle, Clock, Pill, X, User, MapPin, Star, Undo2, Plus, Timer, Check } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// Mock health data - empty to match MyHealthPage
-const healthData = [];
+// Health data is now provided by useHealthData hook
 
 // Mock medications - matches MedicationsPage
 const medications = [
@@ -87,6 +88,7 @@ const availableDoctors = [
 const PatientDashboard = () => {
   const { t } = useLanguage();
   const { user } = useMockAuth();
+  const { currentMetrics, healthTrends } = useHealthData();
   const [medicationTaken, setMedicationTaken] = useState<Record<string, boolean>>({});
   // Empty appointments to match AppointmentsPage
   const [appointments] = useState([]);
@@ -383,15 +385,22 @@ const PatientDashboard = () => {
           </div>
         )}
 
-        {/* Health Metrics - No data state to match MyHealthPage */}
+        {/* Health Metrics - Real data from useHealthData */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="border-l-4 border-l-red-500">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Blood Pressure</p>
-                  <p className="text-2xl font-bold text-muted-foreground">--/--</p>
-                  <Badge variant="secondary" className="mt-1 bg-gray-100 text-gray-600">No data</Badge>
+                  <p className="text-2xl font-bold text-foreground">
+                    {currentMetrics.bloodPressureSystolic}/{currentMetrics.bloodPressureDiastolic}
+                  </p>
+                  <Badge 
+                    variant="secondary" 
+                    className={`mt-1 ${getBloodPressureStatus(currentMetrics.bloodPressureSystolic, currentMetrics.bloodPressureDiastolic).color}`}
+                  >
+                    {getBloodPressureStatus(currentMetrics.bloodPressureSystolic, currentMetrics.bloodPressureDiastolic).status}
+                  </Badge>
                 </div>
                 <Heart className="w-8 h-8 text-red-500" />
               </div>
@@ -403,8 +412,13 @@ const PatientDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Heart Rate</p>
-                  <p className="text-2xl font-bold text-muted-foreground">-- BPM</p>
-                  <Badge variant="secondary" className="mt-1 bg-gray-100 text-gray-600">No data</Badge>
+                  <p className="text-2xl font-bold text-foreground">{currentMetrics.heartRate} BPM</p>
+                  <Badge 
+                    variant="secondary" 
+                    className={`mt-1 ${getHeartRateStatus(currentMetrics.heartRate).color}`}
+                  >
+                    {getHeartRateStatus(currentMetrics.heartRate).status}
+                  </Badge>
                 </div>
                 <Activity className="w-8 h-8 text-blue-500" />
               </div>
@@ -416,8 +430,13 @@ const PatientDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Blood Sugar</p>
-                  <p className="text-2xl font-bold text-muted-foreground">-- mg/dL</p>
-                  <Badge variant="secondary" className="mt-1 bg-gray-100 text-gray-600">No data</Badge>
+                  <p className="text-2xl font-bold text-foreground">{currentMetrics.bloodSugar} mg/dL</p>
+                  <Badge 
+                    variant="secondary" 
+                    className={`mt-1 ${getBloodSugarStatus(currentMetrics.bloodSugar).color}`}
+                  >
+                    {getBloodSugarStatus(currentMetrics.bloodSugar).status}
+                  </Badge>
                 </div>
                 <Thermometer className="w-8 h-8 text-orange-500" />
               </div>
@@ -429,8 +448,13 @@ const PatientDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Weight</p>
-                  <p className="text-2xl font-bold text-muted-foreground">-- kg</p>
-                  <Badge variant="secondary" className="mt-1 bg-gray-100 text-gray-600">No data</Badge>
+                  <p className="text-2xl font-bold text-foreground">{currentMetrics.weight} kg</p>
+                  <Badge 
+                    variant="secondary" 
+                    className={`mt-1 ${getWeightStatus(currentMetrics.weight).color}`}
+                  >
+                    BMI: {getWeightStatus(currentMetrics.weight).bmi}
+                  </Badge>
                 </div>
                 <Weight className="w-8 h-8 text-purple-500" />
               </div>
@@ -438,7 +462,7 @@ const PatientDashboard = () => {
           </Card>
         </div>
 
-        {/* Health Trends Chart - No data state */}
+        {/* Health Trends Chart - Real data */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -447,24 +471,18 @@ const PatientDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {healthData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={healthData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="bloodSugar" stroke="#f97316" strokeWidth={2} name="Blood Sugar" />
-                  <Line type="monotone" dataKey="heartRate" stroke="#3b82f6" strokeWidth={2} name="Heart Rate" />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-                <TrendingUp className="w-12 h-12 mb-4 opacity-50" />
-                <p className="text-lg font-medium mb-2">No Health Data Available</p>
-                <p className="text-sm text-center">Start logging your health measurements to see trends and insights here.</p>
-              </div>
-            )}
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={healthTrends}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="bloodSugar" stroke="#f97316" strokeWidth={2} name="Blood Sugar (mg/dL)" />
+                <Line type="monotone" dataKey="heartRate" stroke="#3b82f6" strokeWidth={2} name="Heart Rate (BPM)" />
+                <Line type="monotone" dataKey="bloodPressure" stroke="#ef4444" strokeWidth={2} name="Blood Pressure (Systolic)" />
+                <Line type="monotone" dataKey="weight" stroke="#8b5cf6" strokeWidth={2} name="Weight (kg)" />
+              </LineChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 

@@ -5,17 +5,12 @@ import { Progress } from "@/components/ui/progress";
 import { Heart, Activity, TrendingUp, Thermometer, Weight, Calendar } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useLanguage } from "@/hooks/useLanguage";
-
-const healthData = [
-  { date: 'Jan 15', bloodPressure: 120, heartRate: 72, bloodSugar: 110, weight: 70 },
-  { date: 'Jan 20', bloodPressure: 118, heartRate: 75, bloodSugar: 105, weight: 69.8 },
-  { date: 'Jan 25', bloodPressure: 125, heartRate: 68, bloodSugar: 115, weight: 70.2 },
-  { date: 'Jan 30', bloodPressure: 122, heartRate: 70, bloodSugar: 108, weight: 70.0 },
-  { date: 'Feb 05', bloodPressure: 119, heartRate: 73, bloodSugar: 112, weight: 69.9 },
-];
+import { useHealthData } from "@/hooks/useHealthData";
+import { getBloodPressureStatus, getHeartRateStatus, getBloodSugarStatus, getWeightStatus } from "@/lib/healthUtils";
 
 const MyHealthPage = () => {
   const { t } = useLanguage();
+  const { currentMetrics, healthTrends } = useHealthData();
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -30,8 +25,18 @@ const MyHealthPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">{t("blood_pressure")}</p>
-                <p className="text-2xl font-bold text-muted-foreground">--/--</p>
-                <span className="text-sm text-muted-foreground">{t("mmhg")}</span>
+                <p className="text-2xl font-bold text-foreground">
+                  {currentMetrics.bloodPressureSystolic}/{currentMetrics.bloodPressureDiastolic}
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-sm text-muted-foreground">{t("mmhg")}</span>
+                  <Badge 
+                    variant="secondary" 
+                    className={`${getBloodPressureStatus(currentMetrics.bloodPressureSystolic, currentMetrics.bloodPressureDiastolic).color}`}
+                  >
+                    {getBloodPressureStatus(currentMetrics.bloodPressureSystolic, currentMetrics.bloodPressureDiastolic).status}
+                  </Badge>
+                </div>
               </div>
               <Heart className="w-8 h-8 text-red-500" />
             </div>
@@ -43,7 +48,13 @@ const MyHealthPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">{t("heart_rate")}</p>
-                <p className="text-2xl font-bold text-muted-foreground">-- {t("bpm")}</p>
+                <p className="text-2xl font-bold text-foreground">{currentMetrics.heartRate} {t("bpm")}</p>
+                <Badge 
+                  variant="secondary" 
+                  className={`mt-1 ${getHeartRateStatus(currentMetrics.heartRate).color}`}
+                >
+                  {getHeartRateStatus(currentMetrics.heartRate).status}
+                </Badge>
               </div>
               <Activity className="w-8 h-8 text-blue-500" />
             </div>
@@ -55,8 +66,13 @@ const MyHealthPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Blood Sugar</p>
-                <p className="text-2xl font-bold text-muted-foreground">-- mg/dL</p>
-                <Badge variant="secondary" className="mt-1 bg-gray-100 text-gray-600">No data</Badge>
+                <p className="text-2xl font-bold text-foreground">{currentMetrics.bloodSugar} mg/dL</p>
+                <Badge 
+                  variant="secondary" 
+                  className={`mt-1 ${getBloodSugarStatus(currentMetrics.bloodSugar).color}`}
+                >
+                  {getBloodSugarStatus(currentMetrics.bloodSugar).status}
+                </Badge>
               </div>
               <Thermometer className="w-8 h-8 text-orange-500" />
             </div>
@@ -68,8 +84,18 @@ const MyHealthPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">{t("weight")}</p>
-                <p className="text-2xl font-bold text-muted-foreground">-- {t("kg")}</p>
-                <Badge variant="secondary" className="mt-1 bg-gray-100 text-gray-600">{t("no_data")}</Badge>
+                <p className="text-2xl font-bold text-foreground">{currentMetrics.weight} {t("kg")}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge 
+                    variant="secondary" 
+                    className={`${getWeightStatus(currentMetrics.weight).color}`}
+                  >
+                    BMI: {getWeightStatus(currentMetrics.weight).bmi}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {getWeightStatus(currentMetrics.weight).status}
+                  </Badge>
+                </div>
               </div>
               <Weight className="w-8 h-8 text-purple-500" />
             </div>
@@ -82,17 +108,22 @@ const MyHealthPage = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
-            {t("health_trends")}
+            {t("health_trends")} (Last 30 Days)
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-64 bg-muted/20 rounded-lg">
-            <div className="text-center">
-              <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">{t("no_health_data_available")}</p>
-              <p className="text-sm text-muted-foreground">{t("start_tracking_health")}</p>
-            </div>
-          </div>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={healthTrends}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="bloodSugar" stroke="#f97316" strokeWidth={2} name="Blood Sugar (mg/dL)" />
+              <Line type="monotone" dataKey="heartRate" stroke="#3b82f6" strokeWidth={2} name="Heart Rate (BPM)" />
+              <Line type="monotone" dataKey="bloodPressure" stroke="#ef4444" strokeWidth={2} name="Blood Pressure (Systolic)" />
+              <Line type="monotone" dataKey="weight" stroke="#8b5cf6" strokeWidth={2} name="Weight (kg)" />
+            </LineChart>
+          </ResponsiveContainer>
         </CardContent>
       </Card>
 

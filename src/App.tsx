@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MockAuthProvider } from "@/hooks/useMockAuth";
 import { LanguageProvider } from "@/hooks/useLanguage";
+import { HealthDataProvider } from "@/hooks/useHealthData";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
@@ -27,10 +28,11 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <MockAuthProvider>
       <LanguageProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <HealthDataProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Layout><LoginPage /></Layout>} />
@@ -57,9 +59,10 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
-      </LanguageProvider>
-    </MockAuthProvider>
-  </QueryClientProvider>
+      </HealthDataProvider>
+    </LanguageProvider>
+  </MockAuthProvider>
+</QueryClientProvider>
 );
 
 export default App;
