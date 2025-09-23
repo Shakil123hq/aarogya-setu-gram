@@ -47,23 +47,24 @@ export const MockAuthProvider = ({ children }: { children: ReactNode }) => {
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-
-      if (!res.ok || !data?.success) {
-        toast({ title: 'Sign in failed', description: data?.message || 'Invalid credentials', variant: 'destructive' });
-        throw new Error(data?.message || 'Invalid credentials');
+      const response = await mockAuthAPI.login(email, password);
+      
+      if (response.success && response.user && response.token) {
+        setUser(response.user);
+        localStorage.setItem('auth_token', response.token);
+        
+        toast({
+          title: "Sign in successful",
+          description: response.message || "Welcome back!",
+        });
+      } else {
+        toast({
+          title: "Sign in failed",
+          description: response.message || "Invalid credentials",
+          variant: "destructive",
+        });
+        throw new Error(response.message);
       }
-
-      const newUser = data.user as User;
-      setUser(newUser);
-      if (data.token) localStorage.setItem('auth_token', data.token);
-
-      toast({ title: 'Sign in successful', description: 'Welcome back!' });
     } finally {
       setLoading(false);
     }
@@ -72,27 +73,24 @@ export const MockAuthProvider = ({ children }: { children: ReactNode }) => {
   const signUp = async (email: string, password: string, displayName: string, role: UserRole) => {
     setLoading(true);
     try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, fullName: displayName, role }),
-      });
-      const data = await res.json();
-
-      if (!res.ok || !data?.success) {
+      const response = await mockAuthAPI.register(email, password, displayName, role);
+      
+      if (response.success && response.user && response.token) {
+        // Don't auto-login after registration for security
         toast({
-          title: 'Sign up failed',
-          description: data?.message || 'Registration failed',
-          variant: 'destructive',
+          title: "Account created successfully",
+          description: response.message || "You can now sign in with your credentials.",
         });
-        throw new Error(data?.message || 'Registration failed');
+        
+        return response.user;
+      } else {
+        toast({
+          title: "Sign up failed",
+          description: response.message || "Registration failed",
+          variant: "destructive",
+        });
+        throw new Error(response.message);
       }
-
-      toast({
-        title: 'Account created successfully',
-        description: 'You can now sign in with your credentials.',
-      });
-      return data.user as User;
     } finally {
       setLoading(false);
     }
